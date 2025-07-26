@@ -7,6 +7,7 @@ import { X } from "lucide-react"
 import { useTheme } from "@/contexts/providers/theme-context"
 import { PropertyInfo } from "@/components/features/property/property-info"
 import { BillProviders } from "@/components/features/property/bill-providers"
+import { PhotosGrid } from "@/components/features/property/photos-grid"
 
 interface DialogWindowProps {
   isOpen: boolean
@@ -59,9 +60,18 @@ export function DialogWindow({ isOpen, onClose, title, iconSrc, windowId, zIndex
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
       if (isDragging) {
+        const newX = e.clientX - dragOffset.x
+        const newY = e.clientY - dragOffset.y
+        
+        // Boundary constraints
+        const maxX = window.innerWidth - size.width
+        const maxY = window.innerHeight - size.height - 120 // Leave space for dock (bottom-4 + dock height)
+        const minX = 0
+        const minY = 0
+        
         setPosition({
-          x: e.clientX - dragOffset.x,
-          y: e.clientY - dragOffset.y,
+          x: Math.max(minX, Math.min(maxX, newX)),
+          y: Math.max(minY, Math.min(maxY, newY)),
         })
       } else if (isResizing) {
         const deltaX = e.clientX - resizeStart.x
@@ -81,13 +91,22 @@ export function DialogWindow({ isOpen, onClose, title, iconSrc, windowId, zIndex
           newX = resizeStart.posX + widthChange
         }
         if (resizeHandle.includes("bottom")) {
-          newHeight = Math.max(200, resizeStart.height + deltaY)
+          newHeight = Math.max(200, Math.min(resizeStart.height + deltaY, window.innerHeight - newY - 100))
         }
         if (resizeHandle.includes("top")) {
           const heightChange = Math.min(deltaY, resizeStart.height - 200)
           newHeight = resizeStart.height - heightChange
           newY = resizeStart.posY + heightChange
         }
+
+        // Boundary constraints for resize
+        const maxX = window.innerWidth - newWidth
+        const maxY = window.innerHeight - newHeight - 120
+        const minX = 0
+        const minY = 0
+        
+        newX = Math.max(minX, Math.min(maxX, newX))
+        newY = Math.max(minY, Math.min(maxY, newY))
 
         setSize({ width: newWidth, height: newHeight })
         setPosition({ x: newX, y: newY })
@@ -161,6 +180,9 @@ export function DialogWindow({ isOpen, onClose, title, iconSrc, windowId, zIndex
     }
     if (title === "Bills") {
       return <BillProviders />
+    }
+    if (title === "Photos") {
+      return <PhotosGrid theme={theme} />
     }
     return <div className="p-4 text-gray-500">Content for {title}</div>
   }
