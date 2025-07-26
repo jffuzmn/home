@@ -7,6 +7,7 @@ import { X } from "lucide-react"
 import { useTheme } from "@/contexts/providers/theme-context"
 import { PropertyInfo } from "@/components/features/property/property-info"
 import { BillProviders } from "@/components/features/property/bill-providers"
+import { PhotosGrid } from "@/components/features/photos/photos-grid"
 
 interface DialogWindowProps {
   isOpen: boolean
@@ -161,6 +162,9 @@ export function DialogWindow({ isOpen, onClose, title, iconSrc, windowId, zIndex
     }
     if (title === "Bills") {
       return <BillProviders />
+    }
+    if (title === "Photos") {
+      return <PhotosGrid />
     }
     return <div className="p-4 text-gray-500">Content for {title}</div>
   }
