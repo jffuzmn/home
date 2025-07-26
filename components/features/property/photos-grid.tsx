@@ -51,7 +51,7 @@ export function PhotosGrid({ theme = "3D" }: PhotosGridProps) {
           container: "bg-gray-200 border-2 border-black",
           header: "bg-blue-600 border-b-2 border-black",
           title: "text-white font-bold font-mono",
-          button: "bg-blue-600 hover:bg-blue-700 text-white border-2 border-black font-bold",
+          button: "bg-gray-300 hover:bg-gray-700 text-black border-2 border-black font-bold",
           card: "bg-white border-2 border-gray-400 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]",
           emptyIcon: "bg-gray-300 border-2 border-black",
           deleteButton: "bg-red-600 hover:bg-red-700 border border-black",
