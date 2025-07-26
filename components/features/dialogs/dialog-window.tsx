@@ -3,7 +3,7 @@
 import type React from "react"
 
 import { useState, useRef, useEffect } from "react"
-import { X } from "lucide-react"
+import { X } from "@/lib/icons"
 import { useTheme } from "@/contexts/providers/theme-context"
 import { PropertyInfo } from "@/components/features/property/property-info"
 import { BillProviders } from "@/components/features/property/bill-providers"

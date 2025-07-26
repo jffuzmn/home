@@ -1,9 +1,10 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useMemo, useCallback } from "react"
 import { FloatingDock } from "./floating-dock"
 import { DialogWindow } from "@/components/features/dialogs/dialog-window"
 import { useTheme } from "@/contexts/providers/theme-context"
+import { useMemoizedValue, useDebounce } from "@/lib/performance"
 
 interface OpenWindow {
   id: string
@@ -17,7 +18,8 @@ export default function FloatingDockDemo() {
   const [openWindows, setOpenWindows] = useState<OpenWindow[]>([])
   const [nextZIndex, setNextZIndex] = useState(1000)
 
-  const getIconPath = (iconName: string) => {
+  // Memoized icon path function
+  const getIconPath = useCallback((iconName: string) => {
     switch (theme) {
       case "Pixel":
         return `/icons/${iconName}.png`
@@ -28,9 +30,10 @@ export default function FloatingDockDemo() {
       default:
         return `/icons/${iconName}.png`
     }
-  }
+  }, [theme])
 
-  const getIconStyle = () => {
+  // Memoized icon style
+  const getIconStyle = useMemoizedValue(() => {
     switch (theme) {
       case "Pixel":
         return { imageRendering: "pixelated" as const }
@@ -40,9 +43,10 @@ export default function FloatingDockDemo() {
       default:
         return { imageRendering: "pixelated" as const }
     }
-  }
+  }, [theme])
 
-  const handleDoubleClick = (title: string, iconName: string) => {
+  // Debounced window opening to prevent rapid multiple opens
+  const handleDoubleClick = useDebounce(useCallback((title: string, iconName: string) => {
     const windowId = `${iconName}-${Date.now()}`
     const newWindow: OpenWindow = {
       id: windowId,
@@ -53,20 +57,21 @@ export default function FloatingDockDemo() {
 
     setOpenWindows((prev) => [...prev, newWindow])
     setNextZIndex((prev) => prev + 1)
-  }
+  }, [getIconPath, nextZIndex]), 300)
 
-  const handleCloseWindow = (windowId: string) => {
+  const handleCloseWindow = useCallback((windowId: string) => {
     setOpenWindows((prev) => prev.filter((window) => window.id !== windowId))
-  }
+  }, [])
 
-  const handleFocusWindow = (windowId: string) => {
+  const handleFocusWindow = useCallback((windowId: string) => {
     setOpenWindows((prev) =>
       prev.map((window) => (window.id === windowId ? { ...window, zIndex: nextZIndex } : window)),
     )
     setNextZIndex((prev) => prev + 1)
-  }
+  }, [nextZIndex])
 
-  const links = [
+  // Memoized links array to prevent unnecessary re-renders
+  const links = useMemo(() => [
     {
       title: "Home",
       iconName: "house",
@@ -75,7 +80,9 @@ export default function FloatingDockDemo() {
           src={getIconPath("house") || "/placeholder.svg"}
           alt="Home"
           className="h-full w-full object-contain"
-          style={getIconStyle()}
+          style={getIconStyle}
+          loading="lazy"
+          decoding="async"
         />
       ),
       href: "#",
@@ -89,7 +96,9 @@ export default function FloatingDockDemo() {
           src={getIconPath("project") || "/placeholder.svg"}
           alt="Projects"
           className="h-full w-full object-contain"
-          style={getIconStyle()}
+          style={getIconStyle}
+          loading="lazy"
+          decoding="async"
         />
       ),
       href: "#",
@@ -103,7 +112,9 @@ export default function FloatingDockDemo() {
           src={getIconPath("document") || "/placeholder.svg"}
           alt="Documents"
           className="h-full w-full object-contain"
-          style={getIconStyle()}
+          style={getIconStyle}
+          loading="lazy"
+          decoding="async"
         />
       ),
       href: "#",
@@ -117,7 +128,9 @@ export default function FloatingDockDemo() {
           src={getIconPath("photos") || "/placeholder.svg"}
           alt="Photos"
           className="h-full w-full object-contain"
-          style={getIconStyle()}
+          style={getIconStyle}
+          loading="lazy"
+          decoding="async"
         />
       ),
       href: "#",
@@ -131,7 +144,9 @@ export default function FloatingDockDemo() {
           src={getIconPath("provider") || "/placeholder.svg"}
           alt="Contractors"
           className="h-full w-full object-contain"
-          style={getIconStyle()}
+          style={getIconStyle}
+          loading="lazy"
+          decoding="async"
         />
       ),
       href: "#",
@@ -145,7 +160,9 @@ export default function FloatingDockDemo() {
           src={getIconPath("paint") || "/placeholder.svg"}
           alt="Paint Colors"
           className="h-full w-full object-contain"
-          style={getIconStyle()}
+          style={getIconStyle}
+          loading="lazy"
+          decoding="async"
         />
       ),
       href: "#",
@@ -159,13 +176,15 @@ export default function FloatingDockDemo() {
           src={getIconPath("bills") || "/placeholder.svg"}
           alt="Bills"
           className="h-full w-full object-contain"
-          style={getIconStyle()}
+          style={getIconStyle}
+          loading="lazy"
+          decoding="async"
         />
       ),
       href: "#",
       onDoubleClick: () => handleDoubleClick("Bills", "bills"),
     },
-  ]
+  ], [getIconPath, getIconStyle, handleDoubleClick])
 
   return (
     <>

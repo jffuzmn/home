@@ -3,7 +3,7 @@
 import type React from "react"
 
 import { cn } from "@/lib/utils"
-import { IconLayoutNavbarCollapse } from "@tabler/icons-react"
+import { IconLayoutNavbarCollapse } from "@/lib/icons"
 import { AnimatePresence, type MotionValue, motion, useMotionValue, useSpring, useTransform } from "motion/react"
 
 import { useRef, useState } from "react"
